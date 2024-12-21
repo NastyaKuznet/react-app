@@ -31,5 +31,32 @@ export const LocalStorage = {
         resolve();
       })
     });
+  },
+
+  deleteTodoItemFromLocalStorage: (deleteTodoItemId) => {
+    return new Promise((resolve, reject) => {
+      LocalStorage.getTodoItemsFromLocalStorage().then((todoItems) => {
+        const newTodoItems = todoItems.filter((todoItem) => {
+          return todoItem.id !== deleteTodoItemId;
+        });
+        localStorage.setItem(TODO_ITEMS_LOCAL_STORAGE_KEY, JSON.stringify(newTodoItems));
+        resolve();
+      })
+    });
+  },
+
+  updateTodoItemIntoLocalStorage: (updatedId, checked, priority) => {
+    return new Promise((resolve, reject) => {
+      LocalStorage.getTodoItemsFromLocalStorage().then((todoItems) => {
+        const newTodoItems = todoItems.map(todoItem => todoItem.id === updatedId ? {
+              id: todoItem.id,
+              title: todoItem.title,
+              isDone: checked,
+              priority: priority
+            } : todoItem );
+        localStorage.setItem(TODO_ITEMS_LOCAL_STORAGE_KEY, JSON.stringify(newTodoItems));
+        resolve();
+      })
+    });
   }
 }

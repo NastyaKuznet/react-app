@@ -4,9 +4,11 @@ import {NewTodoItem} from '../TodoItem/NewTodoItem';
 import {TodoItem} from '../TodoItem/TodoItem';
 import {useData} from '../../data/hooks/useData';
 import {SearchInput} from './components/SearchInput';
+import {SortButton} from './components/SortButtons';
 
 export const TodoItems = () => {
   const [searchValue, setSearchValue] = useState('');
+  const [sortMethod, setSortMethod] = useState('');
 
   const {data: todoItems, isLoading} = useData();
 
@@ -18,25 +20,37 @@ export const TodoItems = () => {
     );
   }
 
-  // Фукнция filter вызывает для каждого элемента переданный ей колбек
-  // И формирует в filteredBySearchItems новый массив элементов, для которых колбек вернул true
-  // Для проверки вхождения подстроки в строку нужно использовать indexOf
   const filteredBySearchItems = todoItems.filter((todoItem) => {
-    // const clearedTodoItemTitle = очистка от пробелов + приведение к одному из регистров
-    // const clearedSearchValue = очистка от пробелов + приведение к одному из регистров
-    // const isSearched = проверка вхождения строки поиска в строку заголовка
-    // return isSearched
-    return true; // удалить после реализации фильтрации
+    const clearedTodoItemTitle = todoItem.title.trim().toLowerCase();
+    const clearedSearchValue = searchValue.trim().toLowerCase();
+    const isSearched = clearedTodoItemTitle.indexOf(clearedSearchValue) !== -1 || clearedSearchValue.length < 3;
+    return isSearched;
   })
 
+  const sortedElements = () =>{
+    if(sortMethod === 'asc'){
+      return filteredBySearchItems.sort((item1, item2) => item1.priority - item2.priority);
+    } else if(sortMethod === 'desc'){
+      return filteredBySearchItems.sort((item1, item2) => item2.priority - item1.priority);
+    } else {
+      return filteredBySearchItems;
+    }
+  };
+  
 
-  const todoItemsElements = filteredBySearchItems.map((item, index) => {
-    return <TodoItem key={item.id} title={item.title} checked={item.isDone} />;
+
+  const todoItemsElements = sortedElements().map((item, index) => {
+    return <TodoItem key={item.id} title={item.title} checked={item.isDone} id={item.id} priority={item.priority} />;
   });
 
   return (
     <TodoItemsContainer>
-      <SearchInput value={searchValue} />
+      
+      <div><SearchInput value={searchValue} setValue={setSearchValue}/>
+        <SortButton src={'assets/images/png/sortasc.png'} alt="Сортировка по возрастанию" onClick={() => setSortMethod('asc')} />
+        <SortButton src={'assets/images/png/sortdesc.png'} alt="Сортировка по убыванию" onClick={() => setSortMethod('desc')} />
+        <SortButton src={'assets/images/png/none.png'} alt="Без сортировки" onClick={() => setSortMethod('')} />
+      </div>
       {todoItemsElements}
       <NewTodoItem />
     </TodoItemsContainer>

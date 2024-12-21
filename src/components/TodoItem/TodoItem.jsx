@@ -1,7 +1,9 @@
 import React from 'react';
-import styled, { css } from "styled-components"
-import {TodoItemContainer} from './TodoItemContainer'
+import styled, { css } from "styled-components";
+import {TodoItemContainer} from './TodoItemContainer';
 import {TodoItemCheckbox} from './TodoItemCheckbox';
+import {TodoItemDelete} from './TodoItemDelete';
+import { TodoItemPriority } from './TodoItemPriority';
 
 const checkedCss = css`
   color: #B5B5BA;
@@ -12,28 +14,20 @@ const Title = styled.span(props => {
   return `
     font-size: 15px;
     ${props.checked ? checkedCss : ''};
+    word-break: break-word;
   `;
 })
 
-const Delete = styled.span`
-  display: inline-block;
-  width: 13px;
-  height: 13px;
-  background-image: url(assets/images/png/delete.png);
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: 13px;
-  cursor: pointer;
-`;
 
-export const TodoItem = ({title, checked}) => {
+export const TodoItem = ({id, title, checked, priority}) => {
   return (
     <TodoItemContainer>
-      <TodoItemCheckbox checked={checked} />
+      <TodoItemCheckbox checked={checked} id={id} priority={priority}/>
       <Title checked={checked}>
         {title}
       </Title>
-      <Delete />
+      <TodoItemPriority checked={checked} id={id} priority={priority}/>
+      <TodoItemDelete deleteTodoItemId={id} title={title}/>
     </TodoItemContainer>
   )
 }
